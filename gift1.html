@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎉 Happy Birthday!</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      overflow: hidden;
+    }
+    h1 {
+      text-align: center;
+      font-size: 3em;
+      color: #ff4081;
+      margin-top: 50px;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #ff4081;
+      animation: fall 5s linear infinite;
+    }
+    @keyframes fall {
+      0% { top: -10px; opacity: 1; }
+      100% { top: 100vh; opacity: 0; }
+    }
+    .message {
+      text-align: center;
+      font-size: 1.5em;
+      margin-top: 20px;
+      color: #333;
+    }
+    .image {
+      display: block;
+      margin: 30px auto;
+      width: 300px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      animation: pulse 3s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .audio {
+      display: block;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎂 Happy Birthday meri darling💖!</h1>
+  <p class="message">Happy Birthday, my love 💖 I miss you, my little troublemaker 💖 I love you so much. Without you, my life truly feels incomplete. You are very special to me. I hope we meet soon. The time I spend with you — I can never forget it. You will always be important to me, whether we talk or not. You’ll always be my darling 👻 No one can ever take your place in my life. Listen up, my ghostie 💖 And if you’ve given someone else the place I gave you in my heart… Just know — I’ll break your face 😅💕 Happy birthday once again, my ghostie 👻 Love you, darling 😘!</p>
+  <img src="WhatsApp Image 2025-10-12 at 10.17.14_c7ad387e.jpg" alt="Birthday Cake" class="image" />
+  <audio class="audio" controls autoplay>
+    <source src="chess ali rani vagu.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    // Generate confetti
+    for (let i = 0; i < 100; i++) {
+      let confetti = document.createElement("div");
+      confetti.className = "confetti";
+      confetti.style.left = Math.random() * window.innerWidth + "px";
+      confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 70%)`;
+      confetti.style.animationDuration = (Math.random() * 3 + 2) + "s";
+      document.body.appendChild(confetti);
+    }
+  </script>
+</body>
+</html>

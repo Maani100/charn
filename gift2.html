@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday My Best Friend 🎂</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+body {
+  margin:0;
+  padding:0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  overflow-x:hidden;
+  color: #fff;
+}
+
+header {
+  text-align:center;
+  padding: 30px 20px 10px;
+  animation: glowText 2s infinite alternate;
+}
+
+@keyframes glowText {
+  from { text-shadow:0 0 12px #0ff,0 0 24px #0ff; }
+  to { text-shadow:0 0 24px #7be3a8,0 0 48px #47c6ff; }
+}
+
+h1 { font-size:3rem; margin:0; font-weight:800; }
+p { margin:8px 0; font-weight:500; color:#cde9ffcc; }
+
+.timer { text-align:center; margin:20px 0; font-size:1.5rem; }
+#countdown { font-size:2rem; font-weight:700; color:#ffd27a; text-shadow:0 0 10px #ffd27a,0 0 20px #ff9b5a; }
+
+.gallery { display:flex; flex-wrap:wrap; justify-content:center; gap:18px; padding:20px; }
+.gallery img { width:160px; height:160px; border-radius:20px; object-fit:cover; backdrop-filter:blur(6px); box-shadow:0 8px 28px rgba(0,0,0,0.5); transition: transform 0.4s ease, box-shadow 0.4s ease; border:2px solid rgba(255,255,255,0.15); }
+.gallery img:hover { transform:scale(1.1) rotate(-3deg); box-shadow:0 0 30px #7be3a8,0 0 50px #47c6ff; }
+
+.puzzle, .game { max-width:400px; margin:30px auto; background:rgba(255,255,255,0.08); border-radius:20px; padding:25px; backdrop-filter:blur(12px); box-shadow:0 12px 36px rgba(0,0,0,0.5); text-align:center; }
+
+.puzzle button, .game button { margin-top:12px; background:linear-gradient(135deg,#47c6ff,#7be3a8); border:none; padding:12px 20px; border-radius:12px; font-weight:600; color:#013042; cursor:pointer; transition: all 0.3s ease; }
+.puzzle button:hover, .game button:hover { transform:scale(1.08); box-shadow:0 0 12px #47c6ff,0 0 20px #7be3a8; }
+
+.dudu-bubu, .bubu { position:fixed; bottom:0; width:120px; animation: float 3s infinite ease-in-out alternate; }
+.bubu { right:0; animation-direction: alternate-reverse; }
+@keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(-20px); } }
+
+.balloon { position:absolute; bottom:-150px; width:50px; animation: floatUp 6s linear infinite; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+@keyframes floatUp { 0% { transform:translateY(0); opacity:1; } 100% { transform:translateY(-900px); opacity:0; } }
+
+canvas.confetti { position:fixed; top:0; left:0; pointer-events:none; width:100%; height:100%; z-index:9999; }
+
+/* Memory game */
+.memory-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:20px; }
+.memory-card { width:80px; height:80px; background:rgba(255,255,255,0.08); border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:2rem; transition: transform 0.3s, box-shadow 0.3s; }
+.memory-card.flipped { background: rgba(255,255,255,0.3); transform: rotateY(180deg); }
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎉 Happy Birthday, Best Buddy! 🎂</h1>
+<p>Celebrating our friendship forever 💙</p>
+</header>
+
+<div class="timer">
+<p>⏰ Countdown to your special day:</p>
+<div id="countdown"></div>
+</div>
+
+<div class="gallery">
+<img src="https://i.imgur.com/QyF6FJv.jpg" alt="Memory 1">
+<img src="https://i.imgur.com/1v6bC1E.jpg" alt="Memory 2">
+<img src="https://i.imgur.com/8RrjXxk.jpg" alt="Memory 3">
+<img src="https://i.imgur.com/1f1l3LJ.jpg" alt="Memory 4">
+</div>
+
+<div class="puzzle">
+<h2>🎮 Click to Reveal a Secret Message!</h2>
+<button onclick="revealMessage()">Reveal 🎁</button>
+<p id="secret" style="margin-top:15px; font-size:1.3rem;"></p>
+</div>
+
+<div class="game">
+<h2>🧩 Memory Game!</h2>
+<div class="memory-grid" id="memoryGrid"></div>
+<p id="memoryMessage" style="margin-top:15px;"></p>
+</div>
+
+<img src="dudu-and-bubu-eating-dudu-and-bubu-cake.gif" alt="Dudu" class="dudu-bubu">
+<img src="dudu-dudu-bubu.gif" alt="Bubu" class="bubu">
+
+<img src="https://i.imgur.com/kbT1OzB.png" class="balloon" style="left:10%;">
+<img src="https://i.imgur.com/kbT1OzB.png" class="balloon" style="left:40%;">
+<img src="https://i.imgur.com/kbT1OzB.png" class="balloon" style="left:70%;">
+
+<canvas class="confetti" id="confetti"></canvas>
+
+<audio id="voice" src="sohna yaar.mp3"></audio>
+
+<script>
+/* Countdown Timer */
+const birthdayDate = new Date("oct 15, 2025 00:00:00").getTime();
+setInterval(() => {
+  const now = new Date().getTime();
+  const diff = birthdayDate - now;
+  const days=Math.floor(diff/(1000*60*60*24));
+  const hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const mins=Math.floor((diff%(1000*60*60))/(1000*60));
+  const secs=Math.floor((diff%(1000*60))/1000);
+  document.getElementById("countdown").innerHTML = days+"d "+hours+"h "+mins+"m "+secs+"s ";
+  if(diff<0) document.getElementById("countdown").innerHTML="🎉 It's Your Birthday! 🎂";
+},1000);
+
+/* Reveal message + confetti + voice */
+const confettiCanvas = document.getElementById('confetti');
+confettiCanvas.width = window.innerWidth;
+confettiCanvas.height = window.innerHeight;
+const ctx = confettiCanvas.getContext('2d');
+let confettiParticles=[];
+
+function triggerConfetti() {
+  const colors=['#47c6ff','#7be3a8','#ffd27a','#ff9bb3','#9bd6ff'];
+  for(let i=0;i<80;i++){
+    confettiParticles.push({
+      x:Math.random()*confettiCanvas.width,
+      y:Math.random()*confettiCanvas.height- confettiCanvas.height,
+      vx:(Math.random()-0.5)*5,
+      vy:2+Math.random()*5,
+      size:6+Math.random()*6,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      rot:Math.random()*360,
+      rotSpeed:(Math.random()-0.5)*10
+    });
+  }
+  animateConfetti();
+}
+
+function animateConfetti(){
+  ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+  confettiParticles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotSpeed;
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot*Math.PI/180);
+    ctx.fillStyle=p.color;
+    ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+    ctx.restore();
+  });
+  confettiParticles=confettiParticles.filter(p=>p.y<confettiCanvas.height+20);
+  if(confettiParticles.length>0) requestAnimationFrame(animateConfetti);
+}
+
+function revealMessage(){
+  const secret=document.getElementById("secret");
+  secret.innerHTML="💖My favorite person 💖You are so cute, seriously! You always listen to me — I love having you in my life💞";
+  triggerConfetti();
+  document.getElementById("voice").play();
+}
+
+/* Memory Game */
+const symbols=["🎂","🎈","🎁","👻","🎉","❤"];
+let cards=[...symbols,...symbols];
+cards=cards.sort(()=>0.5-Math.random());
+const memoryGrid=document.getElementById("memoryGrid");
+let firstCard=null;
+let secondCard=null;
+let lock=false;
+
+cards.forEach((symbol)=>{
+  const div=document.createElement("div");
+  div.className="memory-card";
+  div.textContent="";
+  div.dataset.symbol=symbol;
+  div.addEventListener("click",()=>flipCard(div));
+  memoryGrid.appendChild(div);
+});
+
+function flipCard(card){
+  if(lock || card===firstCard || card.classList.contains("flipped")) return;
+  card.textContent=card.dataset.symbol;
+  card.classList.add("flipped");
+  if(!firstCard){ firstCard=card; return; }
+  secondCard=card; lock=true;
+  setTimeout(()=>{
+    if(firstCard.dataset.symbol===secondCard.dataset.symbol){
+      firstCard.style.background="linear-gradient(135deg,#47c6ff,#7be3a8)";
+      secondCard.style.background="linear-gradient(135deg,#47c6ff,#7be3a8)";
+      document.getElementById("memoryMessage").textContent="🎉 Pair Matched! Great Job!💞forever thankful for a friend as amazing as you💞";
+      triggerConfetti();
+      document.getElementById("voice").play();
+    } else {
+      firstCard.textContent=""; secondCard.textContent="";
+      firstCard.classList.remove("flipped"); secondCard.classList.remove("flipped");
+    }
+    firstCard=null; secondCard=null; lock=false;
+  },800);
+}
+
+/* Floating Balloons Generator */
+setInterval(() => {
+  const balloon=document.createElement("img");
+  balloon.src="happy-birthday.gif";
+  balloon.classList.add("balloon");
+  balloon.style.left=Math.random()*90+"%";
+  balloon.style.animationDuration=(5+Math.random()*3)+"s";
+  document.body.appendChild(balloon);
+  setTimeout(()=>balloon.remove(),8000);
+},1500);
+
+window.addEventListener('resize',()=>{ confettiCanvas.width=window.innerWidth; confettiCanvas.height=window.innerHeight; });
+</script>
+
+</body>
+</html>
